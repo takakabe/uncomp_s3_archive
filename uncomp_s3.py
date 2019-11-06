@@ -27,7 +27,7 @@ class uncomp():
                 self.tar()
         except:
             print(self.file_name)
-            sys.exit(1)
+            sys.exit(0)
 
     def zip(self):    
         zip = zipfile.ZipFile(self.object)
