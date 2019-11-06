@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=__file__)
     parser._action_groups.pop()
     required = parser.add_argument_group('required arguments')
-    required.add_argument('path', help='example s3://mybucket/wawawa.zip', type=str)
+    required.add_argument('path', help='example s3://mybucket/archive.zip', type=str)
     optional = parser.add_argument_group('optional arguments')
     optional.add_argument('--profile',nargs='?',default='default',help='Use a specific profile from your credential file.') 
 

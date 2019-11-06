@@ -3,11 +3,12 @@ Extracts and displays the archive in S3.
 
 ## usage
 ```
-python uncomp_s3.py --help
+$ python uncomp_s3.py --help
+
 usage: uncomp_s3.py [-h] [--profile [PROFILE]] path
 
 required arguments:
-  path                 example s3://mybucket/wawawa.zip
+  path                 example s3://mybucket/archive.zip
 
 optional arguments:
   --profile [PROFILE]  Use a specific profile from your credential file.
