@@ -17,6 +17,9 @@ optional arguments:
 ## Demo
 ### tarfile
 ```
+$ ls archive.tar.gz
+archive.tar.gz
+
 $ tar tvfz archive.tar.gz
 -rw-rw-rw- kabegiwa/kabegiwa 7 2019-01-12 14:46 wawawa.txt
 -rw-rw-rw- kabegiwa/kabegiwa 0 2019-11-07 07:15 sasasa.txt
@@ -32,6 +35,9 @@ sasasa.txt
 
 ### zipfile
 ```
+$ ls archive.zip
+archive.zip
+
 $ unzip -Z archive.zip
 Archive:  archive.zip
 Zip file size: 325 bytes, number of entries: 2
