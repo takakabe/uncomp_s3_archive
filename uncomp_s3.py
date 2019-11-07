@@ -4,38 +4,49 @@ import zipfile
 import tarfile
 from io import BytesIO
 import argparse
-import re
 import copy
 import sys
 
 class uncomp():
-    def __init__(self, path):    
+    def __init__(self, path, profile='default'):
+        self.session = boto3.Session(profile_name=profile)
+        self.s3 = self.session.resource('s3')
         try:
             self.path_list = path[5:].split('/')
             self.bucket_name = self.path_list[0]
             self.file_name = self.path_list[-1]
-            self.object = BytesIO(s3.Object(bucket_name=self.bucket_name, key=self.file_name).get()["Body"].read())
+            self.object = BytesIO(self.s3.Object(bucket_name=self.bucket_name, key=self.file_name).get()["Body"].read())
             self.tmp_object = copy.copy(self.object)
         except ClientError :
             print('No such key.')
             sys.exit(1)
-
+    
+    def auto(self, flag=''):
         try:
             if zipfile.is_zipfile(self.tmp_object):
-                self.zip()
+                flag = 'zip'
             else :
-                self.tar()
+                flag = 'tar'
         except:
             print(self.file_name)
             sys.exit(0)
+        return flag
 
-    def zip(self):    
+class zip(uncomp):
+    def __init__(self, path, profile='default'):
+        super().__init__(path, profile)
+
+    def print_obj(self):    
         zip = zipfile.ZipFile(self.object)
         for filename in zip.namelist():
-            file_info = zip.getinfo(filename)
             print(filename)
 
-    def tar(self):
+
+class tar(uncomp):
+    def __init__(self, path, profile='default'):
+        super().__init__(path, profile)
+
+    def print_obj(self):
         tar = tarfile.open(fileobj=self.object)
         for filename in tar.getnames():
             print(filename)
@@ -49,11 +60,13 @@ if __name__ == '__main__':
     required.add_argument('path', help='example s3://mybucket/archive.zip', type=str)
     optional = parser.add_argument_group('optional arguments')
     optional.add_argument('--profile',nargs='?',default='default',help='Use a specific profile from your credential file.') 
-
     args = parser.parse_args()
+    path = args.path
+    profile = args.profile
 
-    session = boto3.Session(profile_name=args.profile)
-    s3 = session.resource('s3')
-
-    uncomp(args.path)
+    if uncomp(path, profile).auto() == 'zip':
+        zip(path, profile).print_obj()
+    else:
+        tar(path, profile).print_obj()
+    
 

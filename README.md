@@ -2,6 +2,7 @@
 Extracts and displays the archive in S3.
 
 ## usage
+### command line
 ```
 $ python uncomp_s3.py --help
 
@@ -12,6 +13,14 @@ required arguments:
 
 optional arguments:
   --profile [PROFILE]  Use a specific profile from your credential file.
+```
+
+### Programming
+```python
+import uncomp_s3
+
+uncomp_s3.tar('s3://mybucket/archive.tar.gz').print_obj()
+uncomp_s3.zip('s3://mybucket/archive.zip').print_obj()
 ```
 
 
