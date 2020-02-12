@@ -14,7 +14,7 @@ class uncomp():
         try:
             self.path_list = path[5:].split('/')
             self.bucket_name = self.path_list[0]
-            self.file_name = "/".join(self.path_list[1:])  
+            self.file_name = "/".join(self.path_list[1:])     
             self.object = BytesIO(self.s3.Object(bucket_name=self.bucket_name, key=self.file_name).get()["Body"].read())
             self.tmp_object = copy.copy(self.object)
         except ClientError :
@@ -28,7 +28,7 @@ class uncomp():
             else :
                 flag = 'tar'
         except:
-            print(self.file_name)
+            print(f'error on {self.file_name}.')
             sys.exit(0)
         return flag
 
@@ -51,7 +51,26 @@ class tar(uncomp):
         for filename in tar.getnames():
             print(filename)
         tar.close()
-
+        
+    def extract_obj(self, subfolder=''):
+        tar = tarfile.open(fileobj=self.object)
+        currentpath = "/".join(self.path_list[1:-1])
+        if(subfolder == ''):
+            subfolder = ".".join(self.path_list[-1].split('.')[:-1])
+        targetpath = f"{currentpath}/{subfolder}"
+        self.s3.Object(bucket_name=self.bucket_name, key=f"{targetpath}/").put(Body = "")
+        i=0
+        for filename in tar.getmembers():
+            # check if the file is in current folder
+            if(filename.name.startswith('./')): 
+                safename = filename.name[2:]
+            else:
+                safename = filename.name
+            br = tar.extractfile(filename)
+            self.s3.Object(bucket_name=self.bucket_name, key=f"{targetpath}/{safename}").put(Body = br)
+            i = i+1
+        print(f"Untared {i} files")
+        tar.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=__file__)
@@ -68,5 +87,3 @@ if __name__ == '__main__':
         zip(path, profile).print_obj()
     else:
         tar(path, profile).print_obj()
-    
-
