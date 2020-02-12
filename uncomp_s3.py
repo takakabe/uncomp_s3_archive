@@ -14,7 +14,7 @@ class uncomp():
         try:
             self.path_list = path[5:].split('/')
             self.bucket_name = self.path_list[0]
-            self.file_name = self.path_list[-1]
+            self.file_name = "/".join(self.path_list[1:])  
             self.object = BytesIO(self.s3.Object(bucket_name=self.bucket_name, key=self.file_name).get()["Body"].read())
             self.tmp_object = copy.copy(self.object)
         except ClientError :
